@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+log_dir="${XDG_STATE_HOME:-$HOME/.local/state}/lingmo-session"
+mkdir -p "$log_dir"
+log_file="$log_dir/session.log"
+
+if [ -w /dev/ttyS0 ]; then
+  exec > >(tee -a "$log_file" /dev/ttyS0) 2>&1
+else
+  exec >>"$log_file" 2>&1
+fi
+
+echo "----"
+echo "start: $(date -Is)"
+echo "DISPLAY=${DISPLAY:-}"
+echo "XDG_SESSION_TYPE=${XDG_SESSION_TYPE:-}"
+echo "WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}"
+
+# Ensure UTF-8 locale for Qt and desktop components (some environments default to LANG=C).
+if [ "${LANG:-C}" = "C" ] || [ -z "${LANG:-}" ]; then
+  export LANG=C.UTF-8
+fi
+if [ "${LC_ALL:-}" = "C" ] || [ -z "${LC_ALL:-}" ]; then
+  export LC_ALL=C.UTF-8
+fi
+
+# Lingmo components are QtQuick-based and may render blank without GL support in some VMs.
+# Default to software rendering when there's no DRI device (can be overridden by
+# setting these env vars explicitly).
+if [ -z "${QT_QUICK_BACKEND:-}" ] && [ ! -e /dev/dri/renderD128 ] && [ ! -e /dev/dri/card0 ]; then
+  export QT_QUICK_BACKEND=software
+fi
+if [ -z "${QSG_RHI_BACKEND:-}" ] && [ ! -e /dev/dri/renderD128 ] && [ ! -e /dev/dri/card0 ]; then
+  export QSG_RHI_BACKEND=software
+fi
+if [ -z "${QT_OPENGL:-}" ] && [ ! -e /dev/dri/renderD128 ] && [ ! -e /dev/dri/card0 ]; then
+  export QT_OPENGL=software
+fi
+export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
+export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-x11}"
+
+echo "LANG=${LANG:-}"
+echo "LC_ALL=${LC_ALL:-}"
+
+# Ensure we have a session bus (some components crash/exit without it on X11).
+if command -v dbus-run-session >/dev/null 2>&1; then
+  exec dbus-run-session -- /usr/local/bin/lingmo-session-start
+fi
+
+exec /usr/local/bin/lingmo-session-start

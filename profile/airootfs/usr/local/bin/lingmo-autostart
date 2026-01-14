@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+log_dir="${XDG_STATE_HOME:-$HOME/.local/state}/lingmo-session"
+mkdir -p "$log_dir"
+log_file="$log_dir/autostart.log"
+
+if [ -w /dev/ttyS0 ]; then
+  exec > >(tee -a "$log_file" /dev/ttyS0) 2>&1
+else
+  exec >>"$log_file" 2>&1
+fi
+echo "----"
+echo "autostart: $(date -Is)"
+echo "DISPLAY=${DISPLAY:-}"
+echo "XDG_SESSION_TYPE=${XDG_SESSION_TYPE:-}"
+
+wait_for_kwin() {
+  for _ in $(seq 1 200); do
+    if pgrep -u "$USER" -x kwin_x11 >/dev/null 2>&1 || pgrep -u "$USER" -x kwin_wayland >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.1
+  done
+  return 1
+}
+
+run_supervised() {
+  local proc_name="$1"
+  shift
+
+  if pgrep -u "$USER" -x "$proc_name" >/dev/null 2>&1; then
+    echo "$proc_name already running"
+    return 0
+  fi
+
+  (
+    while true; do
+      echo "starting $proc_name: $*"
+      "$@"
+      rc=$?
+      echo "$proc_name exited rc=$rc; restarting in 1s"
+      sleep 1
+    done
+  ) &
+}
+
+wait_for_kwin || echo "kwin not detected; continuing anyway"
+
+run_supervised lingmo-settings-daemon /usr/bin/lingmo-settings-daemon
+run_supervised lingmo-statusbar /usr/bin/lingmo-statusbar
+run_supervised lingmo-dock /usr/bin/lingmo-dock
+
+disown -a || true

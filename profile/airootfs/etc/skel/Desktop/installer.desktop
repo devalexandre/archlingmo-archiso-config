@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=System Installer
+Name=Install System
 Comment=Install ArchLingmo using Calamares
 Exec=sudo -E calamares
 Icon=calamares

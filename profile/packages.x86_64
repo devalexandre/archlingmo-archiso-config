@@ -64,6 +64,8 @@ debootstrap
 networkmanager
 network-manager-applet
 xorg-xhost
+archinstall
+os-prober
 
 # archlinuxcn
 archlinuxcn-keyring
@@ -75,7 +77,7 @@ fastfetch
 ncdu
 aria2
 htop
-p7zip
+7zip
 
 # zsh
 oh-my-zsh-git
@@ -88,12 +90,28 @@ open-vm-tools
 xf86-input-vmmouse
 xf86-video-nouveau
 
+# --- Xorg base (ESSENCIAL) ---
+xorg-server
+xorg-xinit
+xorg-xrandr
+xorg-setxkbmap
+xorg-xinput
+xterm
+
+# --- Mesa / OpenGL ---
+mesa
+
+# --- Drivers fallback (SALVAM VM E HARDWARE ANTIGO) ---
+xf86-video-vesa
+xf86-video-fbdev
+xf86-video-qxl
+
+
 # fonts
 ttf-dejavu
 wqy-zenhei
 
 # gui tools
-calamares
 gparted
 firefox
 
@@ -113,7 +131,7 @@ sddm
 kwin
 modemmanager-qt5
 lingmo-core
-lingmoui
+LingmoUI
 liblingmo
 lingmo-filemanager
 lingmo-settings
@@ -122,7 +140,6 @@ lingmo-dock
 lingmo-launcher
 lingmo-statusbar
 lingmo-qt-plugins
-lingmo-kwin-plugins
 lingmo-gtk-themes
 lingmo-systemicons
 lingmo-wallpapers
