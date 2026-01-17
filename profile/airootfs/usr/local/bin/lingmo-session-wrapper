@@ -25,14 +25,33 @@ if [ "${LC_ALL:-}" = "C" ] || [ -z "${LC_ALL:-}" ]; then
   export LC_ALL=C.UTF-8
 fi
 
+use_software=0
+if [ -n "${LINGMO_FORCE_SOFTWARE:-}" ]; then
+  use_software=1
+elif [ ! -e /dev/dri/renderD128 ] && [ ! -e /dev/dri/card0 ]; then
+  use_software=1
+fi
+
 # Lingmo components are QtQuick-based and may render blank without GL support in some VMs.
-# Default to software rendering when there's no DRI device (can be overridden by
-# setting these env vars explicitly).
-export QT_QUICK_BACKEND="${QT_QUICK_BACKEND:-software}"
-export QSG_RHI_BACKEND="${QSG_RHI_BACKEND:-software}"
-export QT_OPENGL="${QT_OPENGL:-software}"
-export QSG_RENDER_LOOP="${QSG_RENDER_LOOP:-basic}"
-export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
+# Prefer OpenGL when a DRI device exists; fall back to software otherwise.
+if [ "$use_software" -eq 1 ]; then
+  export QT_QUICK_BACKEND="${QT_QUICK_BACKEND:-software}"
+  export QSG_RHI_BACKEND="${QSG_RHI_BACKEND:-software}"
+  export QT_OPENGL="${QT_OPENGL:-software}"
+  export QSG_RENDER_LOOP="${QSG_RENDER_LOOP:-basic}"
+  export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
+else
+  [ -z "${QSG_RHI_BACKEND:-}" ] && export QSG_RHI_BACKEND=opengl
+  [ -z "${QT_OPENGL:-}" ] && export QT_OPENGL=desktop
+  [ -z "${LIBGL_ALWAYS_SOFTWARE:-}" ] && export LIBGL_ALWAYS_SOFTWARE=0
+fi
+export QT_QPA_PLATFORMTHEME="${QT_QPA_PLATFORMTHEME:-lingmo}"
+export QT_STYLE_OVERRIDE="${QT_STYLE_OVERRIDE:-lingmo-style}"
+export QML_DISABLE_DISK_CACHE="${QML_DISABLE_DISK_CACHE:-1}"
+export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}/usr/lib/qt/qml"
+export QML2_IMPORT_PATH="${QML2_IMPORT_PATH:+$QML2_IMPORT_PATH:}/usr/lib/qt/qml"
+export QT_PLUGIN_PATH="${QT_PLUGIN_PATH:+$QT_PLUGIN_PATH:}/usr/lib/qt/plugins"
+export QT_QUICK_CONTROLS_STYLE_PATH="${QT_QUICK_CONTROLS_STYLE_PATH:+$QT_QUICK_CONTROLS_STYLE_PATH:}/usr/lib/qt/qml/QtQuick/Controls.2"
 export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-x11}"
 export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:-Lingmo}"
 export XDG_SESSION_DESKTOP="${XDG_SESSION_DESKTOP:-Lingmo}"
@@ -43,6 +62,7 @@ export QT_ICON_THEME="${QT_ICON_THEME:-Crule-dark}"
 export GTK_ICON_THEME="${GTK_ICON_THEME:-Crule-dark}"
 export GTK_THEME="${GTK_THEME:-Lingmo-dark}"
 export XCURSOR_THEME="${XCURSOR_THEME:-Lingmo-Dark}"
+export QT_LOGGING_RULES="${QT_LOGGING_RULES:-qt.qml.warning=true;qt.qml.debug=false}"
 
 echo "LANG=${LANG:-}"
 echo "LC_ALL=${LC_ALL:-}"

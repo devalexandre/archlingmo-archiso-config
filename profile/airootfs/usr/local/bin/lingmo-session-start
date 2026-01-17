@@ -16,6 +16,17 @@ echo "session-start: $(date -Is)"
 echo "DISPLAY=${DISPLAY:-}"
 echo "XDG_SESSION_TYPE=${XDG_SESSION_TYPE:-}"
 
+cache_root="${XDG_CACHE_HOME:-$HOME/.cache}"
+if [ -d "$cache_root/qmlcache" ]; then
+  echo "clearing stale QML cache at $cache_root/qmlcache"
+  rm -rf "$cache_root/qmlcache" || true
+fi
+
+if [ -x /usr/local/bin/lingmo-update-caches.sh ]; then
+  echo "running lingmo-update-caches.sh"
+  /usr/local/bin/lingmo-update-caches.sh || true
+fi
+
 run_supervised() {
   local proc_name="$1"
   shift

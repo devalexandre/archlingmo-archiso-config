@@ -1,6 +1,11 @@
 polkit.addRule(function(action, subject) {
-    if (action.id === "org.calamares.calamares" &&
-        subject.isInGroup("wheel")) {
+    /* Allow the live user or wheel members to launch Calamares via pkexec. */
+    var allowedActions = [
+        "io.calamares.calamares.pkexec.run",
+        "org.calamares.calamares"
+    ];
+    if (allowedActions.indexOf(action.id) !== -1 &&
+        (subject.user === "lingmo" || subject.isInGroup("wheel"))) {
         return polkit.Result.YES;
     }
 });
