@@ -2,11 +2,7 @@
 set -euo pipefail
 
 mkdir -p /etc/xdg
-cat > /etc/xdg/kwinrc <<'EOF'
-[org.kde.kdecoration3]
-library=org.kde.breeze
-theme=Breeze
-EOF
+
 
 mkdir -p /usr/share/xsessions
 cat > /usr/share/xsessions/lingmo-xsession.desktop <<'EOF'
@@ -18,6 +14,25 @@ Name=Lingmo Desktop
 Keywords=session
 Comment=session
 EOF
+
+# Alinha os nomes esperados dos temas de icones com os diretorios reais.
+if [ -d /usr/share/icons ]; then
+  for mapping in Lingmo:Crule lingmo:Crule Lingmo-dark:Crule-dark lingmo-dark:Crule-dark; do
+    link_name="${mapping%%:*}"
+    target_name="${mapping##*:}"
+    if [ -d "/usr/share/icons/$target_name" ] && [ ! -e "/usr/share/icons/$link_name" ]; then
+      ln -s "$target_name" "/usr/share/icons/$link_name"
+    fi
+  done
+fi
+
+# Wallpaper padrao visivel mesmo se configuracao estiver vazia
+if [ -d /usr/share/backgrounds/lingmoos ]; then
+  default_wallpaper="/usr/share/backgrounds/lingmoos/default.jpg"
+  if [ -f "$default_wallpaper" ]; then
+    ln -sf "$default_wallpaper" /usr/share/backgrounds/default.jpg
+  fi
+fi
 
 # Ensure the live user has a real home directory with the expected skeleton.
 # ArchISO may ship the user in /etc/passwd without creating /home/<user>.
@@ -68,4 +83,9 @@ EOF
 
   calamares_pkg="$(ls -1 /tmp/aur/calamares/calamares-*.pkg.tar.* | grep -v -- '-debug-' | head -n 1)"
   pacman --config "$pacman_conf" --cachedir "$cache_dir" -U --noconfirm "$calamares_pkg"
+fi
+
+# Garante que caches e schemas estejam prontos na imagem final.
+if [ -x /usr/local/bin/lingmo-update-caches.sh ]; then
+  /usr/local/bin/lingmo-update-caches.sh || true
 fi

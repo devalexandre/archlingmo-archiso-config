@@ -54,4 +54,3 @@ command -v lingmo-dock >/dev/null 2>&1 && run_supervised lingmo-dock /usr/bin/li
 
 echo "starting lingmo-session..."
 exec /usr/bin/lingmo-session
-

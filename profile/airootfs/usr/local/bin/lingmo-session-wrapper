@@ -28,17 +28,21 @@ fi
 # Lingmo components are QtQuick-based and may render blank without GL support in some VMs.
 # Default to software rendering when there's no DRI device (can be overridden by
 # setting these env vars explicitly).
-if [ -z "${QT_QUICK_BACKEND:-}" ] && [ ! -e /dev/dri/renderD128 ] && [ ! -e /dev/dri/card0 ]; then
-  export QT_QUICK_BACKEND=software
-fi
-if [ -z "${QSG_RHI_BACKEND:-}" ] && [ ! -e /dev/dri/renderD128 ] && [ ! -e /dev/dri/card0 ]; then
-  export QSG_RHI_BACKEND=software
-fi
-if [ -z "${QT_OPENGL:-}" ] && [ ! -e /dev/dri/renderD128 ] && [ ! -e /dev/dri/card0 ]; then
-  export QT_OPENGL=software
-fi
+export QT_QUICK_BACKEND="${QT_QUICK_BACKEND:-software}"
+export QSG_RHI_BACKEND="${QSG_RHI_BACKEND:-software}"
+export QT_OPENGL="${QT_OPENGL:-software}"
+export QSG_RENDER_LOOP="${QSG_RENDER_LOOP:-basic}"
 export LIBGL_ALWAYS_SOFTWARE="${LIBGL_ALWAYS_SOFTWARE:-1}"
 export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-x11}"
+export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:-Lingmo}"
+export XDG_SESSION_DESKTOP="${XDG_SESSION_DESKTOP:-Lingmo}"
+export KDE_SESSION_VERSION="${KDE_SESSION_VERSION:-5}"
+export QT_QUICK_CONTROLS_STYLE="${QT_QUICK_CONTROLS_STYLE:-lingmo-style}"
+export QT_QUICK_CONTROLS_STYLE_PATH="${QT_QUICK_CONTROLS_STYLE_PATH:-/usr/lib/qt/qml/QtQuick/Controls.2}"
+export QT_ICON_THEME="${QT_ICON_THEME:-Crule-dark}"
+export GTK_ICON_THEME="${GTK_ICON_THEME:-Crule-dark}"
+export GTK_THEME="${GTK_THEME:-Lingmo-dark}"
+export XCURSOR_THEME="${XCURSOR_THEME:-Lingmo-Dark}"
 
 echo "LANG=${LANG:-}"
 echo "LC_ALL=${LC_ALL:-}"
