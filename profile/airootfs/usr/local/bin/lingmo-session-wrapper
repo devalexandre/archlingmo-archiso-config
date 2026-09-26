@@ -43,9 +43,10 @@ export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-x11}"
 echo "LANG=${LANG:-}"
 echo "LC_ALL=${LC_ALL:-}"
 
-# Ensure we have a session bus (some components crash/exit without it on X11).
-if command -v dbus-run-session >/dev/null 2>&1; then
-  exec dbus-run-session -- /usr/local/bin/lingmo-session-start
+# lingmo-session starts kwin, the daemons and the shell (statusbar, dock...) itself.
+# Only start a private bus when the display manager didn't provide one.
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v dbus-run-session >/dev/null 2>&1; then
+  exec dbus-run-session -- /usr/bin/lingmo-session
 fi
 
-exec /usr/local/bin/lingmo-session-start
+exec /usr/bin/lingmo-session

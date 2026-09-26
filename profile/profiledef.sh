@@ -22,5 +22,4 @@ file_permissions=(
   ["/etc/sudoers.d"]="0:0:750"
   ["/root/customize_airootfs.sh"]="0:0:755"
   ["/usr/local/bin/lingmo-session-wrapper"]="0:0:755"
-  ["/usr/local/bin/lingmo-session-start"]="0:0:755"
 )

@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-mkdir -p /etc/xdg
-cat > /etc/xdg/kwinrc <<'EOF'
-[org.kde.kdecoration3]
-library=org.kde.breeze
-theme=Breeze
-EOF
-
 mkdir -p /usr/share/xsessions
 cat > /usr/share/xsessions/lingmo-xsession.desktop <<'EOF'
 [Desktop Entry]

@@ -3,7 +3,6 @@ amd-ucode
 arch-install-scripts
 b43-fwcutter
 base
-broadcom-wl
 diffutils
 efibootmgr
 grub
@@ -126,25 +125,25 @@ pipewire-jack
 pavucontrol
 gst-plugin-pipewire
 
-# lingmo
+# lingmo (Qt6 builds from the local repo; see ../Makefile `make iso`)
 sddm
-kwin
-modemmanager-qt5
+kwin-x11
 lingmo-core
 LingmoUI
 liblingmo
 lingmo-filemanager
 lingmo-settings
-lingmo-terminal
 lingmo-dock
 lingmo-launcher
 lingmo-statusbar
 lingmo-qt-plugins
+lingmo-kwin-plugins
 lingmo-gtk-themes
+lingmo-cursor-themes
 lingmo-systemicons
 lingmo-wallpapers
-lingmo-texteditor
-lingmo-calculator
-lingmo-screenshots
-lingmo-screenlocker
+lingmo-artwork
+lingmo-spotlight
 lingmo-sddm-theme
+# Qt6 stand-ins until lingmo-terminal/texteditor/screenshots/screenlocker are ported
+konsole

@@ -2,9 +2,10 @@ FROM archlinux:latest
 
 # Use a couple de mirrors atualizados para reduzir 404s durante o build.
 RUN printf '%s\n' \
-    'Server = https://mirror.math.princeton.edu/pub/archlinux/$repo/os/$arch' \
-    'Server = https://mirror.pkgbuild.com/$repo/os/$arch' \
-    'Server = https://mirror.clarkson.edu/archlinux/$repo/os/$arch' \
+    'Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch' \
+    'Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch' \
+    'Server = https://mirror.osbeck.com/archlinux/$repo/os/$arch' \
+    'Server = https://mirror.rackspace.com/archlinux/$repo/os/$arch' \
     > /etc/pacman.d/mirrorlist && \
     pacman-key --init && \
     pacman-key --populate archlinux && \
