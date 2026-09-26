@@ -61,4 +61,9 @@ EOF
 
   calamares_pkg="$(ls -1 /tmp/aur/calamares/calamares-*.pkg.tar.* | grep -v -- '-debug-' | head -n 1)"
   pacman --config "$pacman_conf" --cachedir "$cache_dir" -U --noconfirm "$calamares_pkg"
+
+  # The build user and its files were only needed to build Calamares: don't ship
+  # them (the user would show up on the login screen of installed systems)
+  userdel -r builder 2>/dev/null || true
+  rm -rf /tmp/aur "$cache_dir" "$pacman_conf"
 fi
