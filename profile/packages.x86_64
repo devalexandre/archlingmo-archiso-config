@@ -114,7 +114,7 @@ wqy-zenhei
 gparted
 firefox
 
-# audio
+# audio: PipeWire (with its PulseAudio and ALSA bridges) on new installs; never pulseaudio here
 alsa-firmware
 sof-firmware
 alsa-utils
@@ -122,6 +122,7 @@ pipewire
 pipewire-alsa
 pipewire-pulse
 pipewire-jack
+wireplumber
 pavucontrol
 gst-plugin-pipewire
 
